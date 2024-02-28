@@ -55,6 +55,8 @@ public class DataSignVerifier extends TrustCredentialAdapter {
     private static JcaSimpleSignerInfoVerifierBuilder builder =
             new JcaSimpleSignerInfoVerifierBuilder().setProvider(CertUtility.BOUNCY_CASTLE_PROVIDER);
 
+    private static final String INTERFACE_NAME = "testclient";
+
     public static byte[] verifySignature(final byte[] encodedSignedData) throws CMSException, Exception, IOException {
         return verifySignature(encodedSignedData, (cert, additionalCerts) -> true);
     }
@@ -92,7 +94,11 @@ public class DataSignVerifier extends TrustCredentialAdapter {
 
     public DataSignVerifier(final VerificationContext config)
             throws KeyStoreException, CertificateException, NoSuchAlgorithmException, Exception {
-        super(config);
+        super(config, INTERFACE_NAME);
+    }
+
+    private boolean validate(final X509CertificateHolder cert, final List<X509Certificate> allCerts) throws Exception {
+        return validateCertAgainstTrust(CertUtility.certificateFromEncoded(cert.getEncoded()), allCerts) != null;
     }
 
     /**
@@ -132,9 +138,5 @@ public class DataSignVerifier extends TrustCredentialAdapter {
             prvKey = KeyFactory.getInstance("EC").generatePrivate(pkcs8EncKeySpec);
         }
         return prvKey;
-    }
-
-    private boolean validate(final X509CertificateHolder cert, final List<X509Certificate> allCerts) throws Exception {
-        return validateCertAgainstTrust(CertUtility.certificateFromEncoded(cert.getEncoded()), allCerts) != null;
     }
 }

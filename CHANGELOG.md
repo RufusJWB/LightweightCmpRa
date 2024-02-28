@@ -130,4 +130,7 @@ feat:  implement configurable recipient
 
 fix: update some dependencies
 
+### 4.0.2 (Feb 28 2024)
+
+fix: re-align test framework to new version of CmpRaComponent
 
